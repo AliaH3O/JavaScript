@@ -1,0 +1,610 @@
+package VehicleFinal;
+import java.util.*; 
+
+public class VehicleInventory {
+	public static Scanner console = new Scanner (System.in);
+	public static void main (String[] args) throws Exception{
+		
+	 welcome(); 
+	 openLot();  
+	}//end main method
+	
+	static LinkedList <Vehicle> vList = new LinkedList <Vehicle>();
+	
+	public static void welcome() {
+		System.out.println("Welcome to the UWRF Dealership!"); 
+	}//end welcome method
+	
+	
+	public static void closeLot() {
+		System.out.println("Goodbye!");
+	}//end closeLot method
+	
+	
+	public static void openLot() throws Exception {
+		System.out.println("What would you like to do? Enter 'help' for options menu, enter 'exit' to leave");
+		String answer = console.next(); 
+		
+		if (answer.equalsIgnoreCase("add")) {
+			addVehicle();
+		}
+		else if (answer.equalsIgnoreCase("remove")) {
+			removeMenu();  
+		}
+		else if(answer.equalsIgnoreCase("update")) { 
+			updateVehicle(); 
+		}
+		else if(answer.equalsIgnoreCase("find")) {
+			findMenu(); 
+		}
+		else if(answer.equalsIgnoreCase("print")) {
+			printMenu(); 
+		}
+		else if (answer.equalsIgnoreCase("help")) {
+			System.out.println("Enter 'add' to add a vehicle.\n" +
+							   "Enter 'remove' to remove a vehicle.\n" + 
+					           "Enter 'update' to update a vehicle.\n" + 
+							   "Enter 'find' to find a vehicle.\n" + 
+					           "Enter 'print' to print a list of vehicles in the lot.\n"); 
+			openLot(); 
+		}
+		else if (answer.equalsIgnoreCase("exit")) {
+			closeLot(); 
+		}
+		else 
+			throw new Exception ("Please enter an accepted keyword"); 
+	}//end openLot method
+	
+//Menu methods
+	public static void removeMenu() throws Exception{
+		System.out.println("How would you like to remove the vehicle? Enter 'help' for options menu, enter 'exit' to go back");
+		System.out.print("Remove by: ");
+		String removeResponse = console.next(); 
+		
+		if (removeResponse.equalsIgnoreCase("Index")) { 
+			System.out.println("Enter the index of the vechile:");
+			int index = console.nextInt();
+			removeByIndex(index); 
+		}
+		else if (removeResponse.equalsIgnoreCase("VIN")) {
+			System.out.println("Enter the VIN number of the vehicle you want to remove: ");
+			String aVIN = console.next(); 
+			removeByVIN(aVIN); 
+		}
+		else if (removeResponse.equalsIgnoreCase("help")) {
+			System.out.println("Enter 'index' to remove a vehicle by index.\n" +
+							   "Enter 'VIN' to remove a vehicle by VIN number.\n" +
+							   "Enter 'exit' to return to previous menu.");
+			removeMenu(); 
+		}
+		else if (removeResponse.equalsIgnoreCase("exit")) {
+			openLot(); 
+		}
+		else
+			throw new Exception ("Please enter an accepted keyword"); 
+	}//end removeMenu method
+	
+	
+	public static void findMenu() throws Exception{
+		System.out.println("How would you like to find the vehicle? For multiple parameters enter them as one entry." + 
+						   "Enter 'help' for options menu, enter 'exit' to go back");
+		System.out.print("Find by: ");
+		String findResponse = console.next(); 
+		
+		if(findResponse.equalsIgnoreCase("VIN")) {
+			System.out.println("Enter the VIN of the vehicle you want to find: ");
+			String aVIN = console.next(); 
+			
+			findByVIN(aVIN); 
+		}
+		else if(findResponse.equalsIgnoreCase("Type")) {
+			System.out.println("Enter the type of vehicle you want to find: ");
+			String aType = console.next();
+			
+			findByType(aType); 
+		}
+		else if (findResponse.equalsIgnoreCase("Cheapest")) {
+			findByCheapest(); 
+		}
+		else if(findResponse.equalsIgnoreCase("Range")) {
+			System.out.println("Enter the minimum vehicle MSRP");
+			double aMinMSRP = console.nextInt(); 
+			System.out.println("Enter the maximum vehicle MSRP: ");
+			double aMaxMSRP = console.nextInt();
+			
+			findByRange(aMinMSRP, aMaxMSRP); 
+		}
+		else if(findResponse.equalsIgnoreCase("TypeCheapest")) {
+			System.out.println("Enter the type of vehicle you want to find: ");
+			String aType = console.next();
+			
+			findByTypeCheapest(aType); 
+		}
+		else if(findResponse.equalsIgnoreCase("TypeRange")) {
+			System.out.println("Enter the type of vehicle you want to find: ");
+			String aType = console.next();
+			System.out.println("Enter the minimum vehicle MSRP");
+			double aMinMSRP = console.nextInt(); 
+			System.out.println("Enter the maximum vehicle MSRP: ");
+			double aMaxMSRP = console.nextInt();
+			
+			findByTypeRange(aType, aMinMSRP, aMaxMSRP); 
+		}
+		else if(findResponse.equalsIgnoreCase("help")) {
+			System.out.println("Enter 'VIN' to find a vehicle by VIN number.\n" +
+					   		   "Enter 'Type' to find a vehicle by type.\n" +
+					   		   "Enter 'Cheapest' to find a vehicle by cheapest price.\n" +
+					   		   "Enter 'Range' to find a vehicle by range of MSRP.\n" +
+					   		   "Enter 'TypeCheapest' to find a vehicle by type and cheapest price.\n" +
+					   		   "Enter 'TypeRange' to find a vehicle by type and range of MSRP.\n" +
+					           "Enter 'exit' to return to previous menu.");
+			findMenu(); 
+		}
+		else if(findResponse.equalsIgnoreCase("exit")) {
+			openLot(); 
+		}
+		else 
+			throw new Exception("Please enter an accepted keyword"); 
+	}//end findMenu method
+	
+	
+	public static void printMenu() throws Exception{
+		System.out.println("How would you like to print the vehicle inventory?  Enter 'help' for options menu, enter 'exit' to go back");
+		System.out.print("Print by: ");
+		String pResponse = console.next(); 
+		
+		if(pResponse.equalsIgnoreCase("All")) {
+			printAllInventory(); 
+		}
+		else if(pResponse.equalsIgnoreCase("Type")) {
+			System.out.println("Enter the type of vehicles you want to print: ");
+			String aType = console.next();
+			printTypeInventory(aType); 
+		}
+		else if(pResponse.equalsIgnoreCase("VIN")) {
+			System.out.println("Enter the VIN of the vehicle: ");
+			String aVIN = console.next();
+			printVehicleByVIN(aVIN); 
+		}
+		else if(pResponse.equalsIgnoreCase("Index")) {
+			System.out.print("Enter the inventory index of the vehicle: ");
+			int index = console.nextInt(); 
+			printVehicleByIndex(index); 
+		}
+		else if(pResponse.equalsIgnoreCase("help")) {
+			System.out.println("Enter 'All' to print all vehicles in lot inventory.\n" +
+							   "Enter 'Type' to print all vehicles of a certain type.\n" +
+							   "Enter 'VIN' to print a single vehicle with the specified VIN number.\n" +
+							   "Enter 'Index' tp print a singe vehicle listed at specified inventory index.\n");
+			printMenu(); 
+		}
+		else if(pResponse.equalsIgnoreCase("exit")) {
+			openLot(); 
+		}
+		else
+			throw new Exception("Please enter an accepted keyword"); 
+	}//end printMenu method
+	
+	
+//Active methods
+	public static void addVehicle() throws Exception {
+		System.out.println("Enter the information of the vehicle you would like to include.");
+		System.out.println("Enter vehicle type: ");
+		String type = console.next(); 
+		if (!(type.equalsIgnoreCase("car") || type.equalsIgnoreCase("truck") || type.equalsIgnoreCase("suv"))) {
+			throw new Exception ("Please enter a vehicle type of Car, Truck, or SUV"); 
+		}
+		
+		System.out.println("Enter vehicle VIN number: ");
+		String VIN = console.next(); 
+		
+		System.out.println("Enter vehicle MSRP: ");
+		double MSRP = console.nextDouble();
+		
+		System.out.println("Enter vehicle make: ");
+		String make = console.next(); 
+		
+		System.out.println("Enter vehicle model: ");
+		String model = console.next(); 
+		
+		System.out.println("Enter vehicle model year: ");
+		int modelYear = console.nextInt(); 
+		
+		Vehicle nextVehicle = new Vehicle(type, VIN, MSRP, make, model, modelYear); 
+		vList.addLast(nextVehicle);
+		System.out.println("Vehicle added to lot");
+		
+		System.out.println("Would you like to add another vehicle? Enter 'yes' or 'no'");
+		String addResponse = console.next(); 
+		
+		if(addResponse.equalsIgnoreCase("yes")) {
+			addVehicle(); 
+		}
+		else
+			openLot(); 
+	}//end addVehcile method
+	
+	
+	public static void updateVehicle() throws Exception {		
+		System.out.println("Enter the index of the vehicle you want to update: ");
+		int uIndex = console.nextInt();
+		if (uIndex >= vList.size() || uIndex < 0) {
+			throw new Exception("Index out of bounds for lot inventory."); 
+		}
+		else
+			System.out.println(vList.get(uIndex)); 
+		
+		System.out.println("What would you like to update for the vehicle? Enter 'help' for options, and 'exit' to leave");
+		String uAnswer = console.next(); 
+		if (uAnswer.equalsIgnoreCase("VIN")) {
+			System.out.println("Enter new VIN: ");
+			String aVIN = console.next(); 
+			vList.get(uIndex).setVIN(aVIN); 
+			
+			System.out.println(vList.get(uIndex));
+		}
+		else if(uAnswer.equalsIgnoreCase("Type")) {
+			System.out.println("Enter new Type: ");
+			String aType = console.next(); 
+			vList.get(uIndex).setType(aType); 
+			
+			System.out.println(vList.get(uIndex));
+		}
+		else if(uAnswer.equalsIgnoreCase("MSRP")) {
+			System.out.println("Enter new MSRP: ");
+			int aMSRP = console.nextInt(); 
+			vList.get(uIndex).setMSRP(aMSRP); 
+			
+			System.out.println(vList.get(uIndex));
+		}
+		else if(uAnswer.equalsIgnoreCase("Make")) {
+			System.out.println("Enter new Make: ");
+			String aMake = console.next(); 
+			vList.get(uIndex).setMake(aMake); 
+			
+			System.out.println(vList.get(uIndex));
+		}
+		else if(uAnswer.equalsIgnoreCase("Model")) {
+			System.out.println("Enter new Model: ");
+			String aModel = console.next(); 
+			vList.get(uIndex).setVIN(aModel); 
+			
+			System.out.println(vList.get(uIndex));
+		}
+		else if(uAnswer.equalsIgnoreCase("ModelYear")) {
+			System.out.println("Enter new Model Year: ");
+			int aModelYear = console.nextInt(); 
+			vList.get(uIndex).setModelYear(aModelYear); 
+			
+			System.out.println(vList.get(uIndex));
+		}
+		else if(uAnswer.equalsIgnoreCase("help")) {
+			System.out.println("Enter 'VIN' to update the VIN number of the vehicle.\n" +
+					   		   "Enter 'Type' to update the type of the vehicle.\n" +
+					   		   "Enter 'MSRP' to update the MSRP of the vehicle.\n" +
+					   		   "Enter 'Make' to update the make of the vehicle.\n" +
+					   		   "Enter 'Model' to update the model of the vehicle.\n" +
+					   		   "Enter 'ModelYear' to update the model year of the vehicle.\n");
+			updateVehicle(); 
+		}
+		else if(uAnswer.equalsIgnoreCase("exit")) {
+			openLot(); 
+		}
+		else
+			throw new Exception("Please enter an accepted keyword");
+		
+		System.out.println("Would you like to update another vehicle? Enter 'yes' or 'no'");
+		String rAnswer = console.next(); 
+		if (rAnswer.equalsIgnoreCase("yes")) {
+			updateVehicle(); 
+		}
+		else
+			openLot(); 
+	}//end updateVehcile method
+	
+//remove methods
+	public static void removeByIndex(int rIndex) throws Exception{
+		if (rIndex >= vList.size() || rIndex < 0) {
+			throw new Exception("Index out of bounds for lot inventory."); 
+		}
+		else {
+			vList.remove(rIndex); 
+			System.out.println("Vehicle removed from lot");
+		}
+		
+		System.out.println("Would you like to remove another vehicle? Enter 'yes' or 'no'");
+		String rAnswer = console.next(); 
+		if (rAnswer.equalsIgnoreCase("yes")) {
+			removeMenu(); 
+		}
+		else {
+			openLot(); 
+		}
+	}//end removeByIndex method
+	
+	
+	public static void removeByVIN(String rVIN) throws Exception{
+		int counter = 0; 
+		int idx = -1; 
+		
+		for(Vehicle x:vList) {
+			if (x.getVIN().equalsIgnoreCase(rVIN)){
+				idx = counter; 
+				break; 
+			}
+			counter++; 
+		}
+		if(idx >= 0) {
+			vList.remove(idx); 
+		}
+		else {
+			throw new Exception("VIN number not found on lot");
+		}
+		
+		System.out.println("Would you like to remove another vehicle? Enter 'yes' or 'no'");
+		String rAnswer = console.next(); 
+		if (rAnswer.equalsIgnoreCase("yes")) {
+			removeMenu(); 
+		}
+		else {
+			openLot(); 
+		} 
+	}//end removeByVIN method
+	
+//find methods
+	public static void findByVIN(String fVIN) throws Exception {
+		int counter = 0; 
+		int idx = -1; 
+		
+		for(Vehicle x:vList) {
+			if (x.getVIN().equalsIgnoreCase(fVIN)){
+				idx = counter; 
+				break; 
+			}
+			counter++; 
+		}
+		if(idx >= 0) {
+			System.out.println(vList.get(idx)); 
+		}
+		else {
+			throw new Exception("VIN number not found on lot");
+		}
+		
+		System.out.println("Would you like to find another vehicle? Enter 'yes' or 'no'");
+		String fAnswer = console.next(); 
+		if (fAnswer.equalsIgnoreCase("yes")) {
+			findMenu(); 
+		}
+		else
+			openLot();
+	}//end findByVIN method
+	
+	
+	public static void findByType(String fType) throws Exception {
+		int counter = 0; 
+		int idx = -1; 
+		
+		for(Vehicle x:vList) {
+			if (x.getType().equalsIgnoreCase(fType)){
+				idx = counter;
+				System.out.println(vList.get(idx)); 
+			}
+			counter++; 
+		}
+		if(idx < 0) {
+			throw new Exception("Vehicle type not found in lot");
+		}	
+		
+		System.out.println("Would you like to find another vehicle? Enter 'yes' or 'no'");
+		String fAnswer = console.next(); 
+		if (fAnswer.equalsIgnoreCase("yes")) {
+			findMenu(); 
+		}
+		else
+			openLot();
+	}//end findByType method
+	
+	
+	public static void findByCheapest() throws Exception {
+		int counter = 0; 
+		int idx = -1;
+		double checkMSRP; 
+		
+		for(Vehicle x:vList) {
+			checkMSRP = vList.get(0).getMSRP();
+			if (x.getMSRP() <= checkMSRP) {
+				idx = counter;
+				checkMSRP = x.getMSRP();
+			}
+			counter++; 
+		}
+		if(idx < 0) {
+			throw new Exception("No vehicle above the price of $0 is found in lot");
+		}
+		else
+			System.out.println(vList.get(idx));
+		
+		System.out.println("Would you like to find another vehicle? Enter 'yes' or 'no'");
+		String fAnswer = console.next(); 
+		if (fAnswer.equalsIgnoreCase("yes")) {
+			findMenu(); 
+		}
+		else
+			openLot();
+	}//end findByCheapeset method
+	
+	
+	public static void findByRange(double fMinMSRP, double fMaxMSRP) throws Exception {
+		int counter = 0; 
+		int idx = -1; 
+		
+		for(Vehicle x:vList) {
+			if (x.getMSRP() >= fMinMSRP && x.getMSRP() <= fMaxMSRP){
+				idx = counter;
+				System.out.println(vList.get(idx)); 
+			}
+			counter++; 
+		}
+		if(idx < 0) {
+			throw new Exception("All vehicles are priced above the set maximum MSRP or below the set minimum MSRP.");
+		}
+		
+		System.out.println("Would you like to find another vehicle? Enter 'yes' or 'no'");
+		String fAnswer = console.next(); 
+		if (fAnswer.equalsIgnoreCase("yes")) {
+			findMenu(); 
+		}
+		else
+			openLot();
+	}//end findByRange method
+	
+	
+	public static void findByTypeCheapest(String fType) throws Exception {
+		int counter = 0; 
+		int idx = -1;
+		double checkMSRP; 
+		
+		for(Vehicle x:vList) {
+			checkMSRP = vList.get(0).getMSRP();
+			if (x.getType().equalsIgnoreCase(fType) && x.getMSRP() <= checkMSRP) {
+				idx = counter;
+				checkMSRP = x.getMSRP();
+			}
+			counter++; 
+		}
+		if(idx < 0) {
+			throw new Exception("No vehicle above the price of $0 is found in lot");
+		}
+		else
+			System.out.println(vList.get(idx));
+		
+		System.out.println("Would you like to find another vehicle? Enter 'yes' or 'no'");
+		String fAnswer = console.next(); 
+		if (fAnswer.equalsIgnoreCase("yes")) {
+			findMenu(); 
+		}
+		else
+			openLot();
+		
+		System.out.println("Would you like to find another vehicle? Enter 'yes' or 'no'");
+		String fResponse = console.next(); 
+		if (fResponse.equalsIgnoreCase("yes")) {
+			findMenu(); 
+		}
+		else
+			openLot();
+	}//end findByTypeCheapest method
+	
+	
+	public static void findByTypeRange(String fType, double fMinMSRP, double fMaxMSRP) throws Exception {
+		int counter = 0; 
+		int idx = -1; 
+		
+		for(Vehicle x:vList) {
+			if (x.getType().equalsIgnoreCase(fType) && x.getMSRP() >= fMinMSRP && x.getMSRP() <= fMaxMSRP){
+				idx = counter;
+				System.out.println(vList.get(idx)); 
+			}
+			counter++; 
+		}
+		if(idx < 0) {
+			throw new Exception("Either this vehicle type not found in lot or "
+								+ "all vehicles are above the set maximum MSRP or below the set minimum MSRP.");
+		}
+		
+		System.out.println("Would you like to find another vehicle? Enter 'yes' or 'no'");
+		String fAnswer = console.next(); 
+		if (fAnswer.equalsIgnoreCase("yes")) {
+			findMenu(); 
+		}
+		else
+			openLot();
+	}//end findByTypeRange method
+	
+//print methods
+	public static void printAllInventory() throws Exception {
+		Iterator<Vehicle> pItr = vList.iterator();
+		while(pItr.hasNext()) {
+			System.out.println(pItr.next());
+		}
+		
+		System.out.println("Would you like to print inventory again? Enter 'yes' or 'no'");
+		String pAnswer = console.next(); 
+		if (pAnswer.equalsIgnoreCase("yes")) {
+			printMenu(); 
+		}
+		else
+			openLot();
+	}//end printAllInventory method
+	
+	
+	public static void printTypeInventory(String pType) throws Exception { 
+		int counter = 0; 
+		int idx = -1; 
+		
+		for(Vehicle x:vList) {
+			if (x.getType().equalsIgnoreCase(pType)){
+				idx = counter;
+				System.out.println(vList.get(idx)); 
+			}
+			counter++; 
+		}
+		if(idx < 0) {
+			throw new Exception("Vehicle type not found in lot");
+		}
+		
+		System.out.println("Would you like to print inventory again? Enter 'yes' or 'no'");
+		String pAnswer = console.next(); 
+		if (pAnswer.equalsIgnoreCase("yes")) {
+			printMenu(); 
+		}
+		else
+			openLot();
+	}//end printTypeInventory method
+	
+	
+	public static void printVehicleByVIN(String pVIN) throws Exception {		
+		int counter = 0; 
+		int idx = -1; 
+		
+		for(Vehicle x:vList) {
+			if (x.getVIN().equalsIgnoreCase(pVIN)){
+				idx = counter; 
+				break; 
+			}
+			counter++; 
+		}
+		if(idx >= 0) {
+			System.out.println(vList.get(idx)); 
+		}
+		else {
+			throw new Exception("VIN number not found on lot");
+		}
+		
+		System.out.println("Would you like to print inventory again? Enter 'yes' or 'no'");
+		String pAnswer = console.next(); 
+		if (pAnswer.equalsIgnoreCase("yes")) {
+			printMenu(); 
+		}
+		else
+			openLot();
+	}//end printVehicleByVIN method
+	
+	
+	
+	public static void printVehicleByIndex(int pIndex) throws Exception {
+		if (pIndex >= vList.size() || pIndex < 0) {
+			throw new Exception("Index out of bounds for lot inventory."); 
+		}
+		else
+			System.out.println(vList.get(pIndex)); 
+		
+		System.out.println("Would you like to print inventory again? Enter 'yes' or 'no'");
+		String pAnswer = console.next(); 
+		if (pAnswer.equalsIgnoreCase("yes")) {
+			printMenu(); 
+		}
+		else
+			openLot();
+	}//end printVehicleByIndex method
+}//end class VehicleInventory
