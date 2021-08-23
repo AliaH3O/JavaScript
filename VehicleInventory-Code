@@ -1,0 +1,173 @@
+package drivers;
+
+import java.util.*;
+import stack_exceptions.*; 
+
+/*
+ * Title: CSIS 237_Midterm 
+ * Author: Alia Oradei
+ * Author Email: alia.oradei@my.uwrf.edu
+ * 
+ * Created: 3/15/2021
+ * Modified: 3/24/2021
+ * Submitted: 3/24/2021
+ * 
+ * This program is an RPN calculator that takes user input and offers calculations. 
+ * The calculations offered are addition, subtraction, multiplication, and negation. 
+ * The RPN operations offered are negation, reciprocal, determining the square root, rounding elements up, rounding elements down, 
+ * 		and swapping two elements
+ * Once all operations and calculations are completed the elements of the array are printed for the user. 
+ * 
+ * Lines 44 through 49 contain the main variables for the program
+ * 
+ * Lines 51 through 57 ask the user if they would like to use Interactive Mode or String mode. From there the users input is contained in
+ * UserSelection. This is then split into an array to determine the mode requested. 
+ * 
+ * Lines 60 through 66 focus on Interactive Mode. The elements entered by the user are added into InputStack until the exit work "compute" is used. 
+ * 
+ * Lines 69 through 91 focus on String Mode. The elements are entered by the user following an open angle bracket. Each element is separated by a 
+ * semicolon, and the string ends once the user enters a closing angle bracket. The elements are entered into InputStack. 
+ * 
+ * Lines 94 through 100 remove elements from InputStack and check them against the isValidDouble method found on lines 162 through 170.
+ * This method determines if the values are proper operators, operands, and delimiters. If the values are cleared, these are entered onto CalcStack.
+ * 
+ * Lines 102 through 152 do the actual calculations. Elements are popped from CalcStack and depending on the operators the associated functions and 
+ * calculations are completed. If the stack is empty the default case is chosen. 
+ * 
+ * Line 156 prints the elements in CalcStack
+ */
+
+public class MainDriver {
+	public static Scanner console = new Scanner (System.in); 
+	
+	public static void main (String[] args) throws Exception {
+		Queue <String> InputStack = new LinkedList <>();
+		Stack <String> CalcStack = new Stack <>();  
+		String UserInput;
+		String UserSelection; 
+		String Interactive = "Interactive";
+		String SMode = "String"; 
+		
+		System.out.println("Would you like to use Interactive Mode or String Mode? Please enter \"interactive\" or \"string\": "); 
+		UserSelection = console.next(); 
+		String [] SelectionArray = UserSelection.split(" ");
+		
+		for (int index = 0; index < SelectionArray.length; index ++) { 
+			boolean compare1 = SelectionArray[index].equalsIgnoreCase(Interactive); 
+			boolean compare2 = SelectionArray[index].equalsIgnoreCase(SMode); 
+			
+			//Set to Scanner
+			if (compare1) {
+				System.out.println("Please enter in the values for the RPN calculation. When you are ready to compute, enter \"compute\""); 
+				
+				while (!(UserInput = console.nextLine()).equalsIgnoreCase("compute")) {
+					InputStack.add(UserInput); 
+				}//end while loop
+			}//end if statement
+			
+			//Set to String Iterator 
+			else if (compare2) {
+				//Flush the UserInput buffer
+				console.nextLine(); 
+				
+				System.out.println("Seperate each value with a semicolon (;).");
+				System.out.println("Please enter a right angle braket or chevron (>) after all values have been entered.");
+				System.out.print("<"); 
+				
+				//Gathers entire line of UserInput
+				UserInput = console.nextLine(); 
+				
+				//Removes the closing bracket so it doesn't get calculated
+				UserInput = UserInput.replaceAll(">",""); 			
+				
+				//Split the UserInput using a semicolon as the delimiter
+				String [] splitInput = UserInput.split(";"); 		
+				
+				//Push the delimited inputs into InputStack
+				for (int index1 = 0; index1 < splitInput.length; index1++) {
+					InputStack.add(splitInput[index1]); 
+				}//for loop
+			}//end if else statement
+		}//end for loop
+		
+			//While there are elements within InputStack, pop them, check them against isValidDouble, and complete the cases below
+			while (!InputStack.isEmpty()) {
+				UserInput = InputStack.remove(); 
+				
+				//If there is no User Input, proceed to the default case
+				if (UserInput.isEmpty()) {
+					continue; 
+				}//end if statement
+				
+				switch (UserInput) {
+				//Addition
+					case "+":  CalcStack.push(Double.toString(Double.parseDouble(CalcStack.pop()) + Double.parseDouble(CalcStack.pop()))); 
+						break; 
+						
+				//Subtraction	
+					case "-": CalcStack.push(Double.toString(Double.parseDouble(CalcStack.pop()) - Double.parseDouble(CalcStack.pop()))); 
+						break; 
+						
+				//Multiplication	
+					case "*": CalcStack.push(Double.toString(Double.parseDouble(CalcStack.pop()) * Double.parseDouble(CalcStack.pop()))); 
+						break; 
+						
+				//Division	
+					case "/": CalcStack.push(Double.toString(Double.parseDouble(CalcStack.pop()) / Double.parseDouble(CalcStack.pop()))); 
+						break; 
+					
+				//Reciprocal
+					case "R": CalcStack.push(Double.toString(1/Double.parseDouble(CalcStack.pop())));
+						break; 
+						
+				//Negation
+					case "N": CalcStack.push(Double.toString(Double.parseDouble(CalcStack.pop()) * -1));
+						break; 
+						
+				//Sqrt
+					case "S": CalcStack.push(Double.toString(Math.sqrt(Double.parseDouble(CalcStack.pop())))); 
+						break; 
+						
+				//Floor
+					case "F": CalcStack.push(Double.toString(Math.floor(Double.parseDouble(CalcStack.pop())))); 
+						break; 
+						
+				//Ceiling
+					case "C": CalcStack.push(Double.toString(Math.ceil(Double.parseDouble(CalcStack.pop())))); 
+						break; 
+					
+				//Swap
+					case "X": String Temp1 = CalcStack.pop(); 
+							  String Temp2 = CalcStack.pop(); 
+							  CalcStack.push(Temp1); 
+							  CalcStack.push(Temp2); 
+						break;
+				//Default	
+					default: if(isValidDouble(UserInput)) { 
+								CalcStack.add(UserInput);
+							 }//end if statement
+							 else {
+								throw new ArrayFormatException("Must use designated operators, operands, and delimiters"); 
+							 }//end else statement
+				}//end switch statements
+				
+			}//end while loop
+			
+			System.out.println(CalcStack);
+		
+	}//end main method
+
+//Global methods
+	
+	//Checks values to make sure they are numbers and not letters
+	public static boolean isValidDouble(String str) {
+		  try {
+			  double Variable = Double.parseDouble(str);
+			  return true;
+		  }//end try
+		  catch (NumberFormatException ignored) {
+			  return false;
+		  }//end catch
+		}//end isvalidDouble method
+	
+}//end MainDriver class
