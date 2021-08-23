@@ -1,0 +1,75 @@
+package VehicleFinal;
+import java.util.*;
+
+public class Vehicle {
+	private String Type; 			//Vehicle type: Car, Truck, or SUV
+	private String VIN;				//Unique code that identifies the vehicle
+	private Double MSRP; 			//Manufacturer's suggest retail price of the vehicle
+	private String Make; 			//Manufacturer of the vehicle
+	private String Model; 			//Model name of the vehicle
+	private Integer ModelYear; 
+
+//constructor
+	public Vehicle(String aType, String aVIN, double aMSRP, String aMake, String aModel, int aModelYear) {
+		this.Type = aType; 
+		this.VIN = aVIN; 
+		this.MSRP = aMSRP; 
+		this.Make = aMake; 
+		this.Model = aModel; 
+		this.ModelYear = aModelYear; 
+	}
+	
+//setters and getters
+	public void setType(String newType) {
+		this.Type = newType; 
+	}
+	public String getType() {
+		return Type; 
+	}
+	
+	public void setVIN(String newVIN) {
+		this.VIN = newVIN; 
+	}
+	public String getVIN() {
+		return VIN; 
+	}
+	
+	public void setMSRP(double newMSRP) {
+		this.MSRP = newMSRP; 
+	}
+	public double getMSRP() {
+		return MSRP; 
+	}
+	
+	public void setMake(String newMake) {
+		this.Make = newMake; 
+	}
+	public String getMake() {
+		return Make; 
+	}
+	
+	public void setModel(String newModel) {
+		this.Model = newModel; 
+	}
+	public String getModel() {
+		return Model; 
+	}
+	
+	public void setModelYear(int newModelYear) {
+		this.ModelYear = newModelYear; 
+	}
+	public int getModelYear() {
+		return ModelYear; 
+	}
+	
+//toString method
+	public String toString() {
+		return "Type: " + Type + "\n" + 
+			   "VIN: " + VIN + "\n" + 
+			   "MSRP: $" + MSRP + "\n" +
+			   "Make: " + Make + "\n" +
+			   "Model: " + Model + "\n" + 
+			   "Model Year: " + ModelYear + "\n"; 
+	}
+	
+}//end class Vehicle
